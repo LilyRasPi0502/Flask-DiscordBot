@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>{{title}}</title>
+	<link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+	<div>
+		<div class=dc_panel_titlebar>
+			<div class=panel_title>{{title}}</div>
+			<div class=selectbox>
+				<select onchange="location.href='/config/'+this.selectedIndex">
+					{% for o in arg["Bot_List"] %}
+						<option value="{{ o.name }}" {% if slt['name'] == o.name: %} selected {% endif %} >{{ o.name }}</option>
+					{% endfor %}
+				</select>
+			</div>
+		</div>
+		<div class=dc_panel>
+			<form method='post' action='/save'>
+				<label>{{"Name"}}</label>
+				<input type='text' name='botname' value="{{slt['name']}}"/>
+				</br>
+				<label>{{"ID"}}</label>
+				<input type='text' name='botid'  value="{{slt['ID']}}"/>
+				</br>
+				<label>{{"Token"}}</label>
+				<input type='password' name='bottoken'  value="{{slt['Token']}}"/>
+				<br><input type=hidden name=Action value={{slt['name']}}>
+				<br>
+				<textarea name=setting>{{ slt["Setting"] }}</textarea>
+				<button type='submit'>Save</button>
+			</form>
+		</div>
+	</div>
+</body>
+</html>

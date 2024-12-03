@@ -1,0 +1,149 @@
+html, body{
+	margin: 0;
+	padding: 0;
+	background-color: white;
+	font-weight:bold;
+	width: 100%;
+	height: 100%;
+	font-family: monospace, arial,"Microsoft JhengHei","微軟正黑體",sans-serif !important;
+}
+.dc_panel{
+	position: absolute;
+	overflow: scroll;
+	z-index: 50;
+	background-color: #666666;
+	color: white;
+	margin: 10px;
+	border: solid gray 1px;
+	border-radius: 10px 10px 10px 10px;
+	width: calc(100% - 40px);
+	height: calc(90% - 20px);
+	padding-top: 65px;
+	padding-bottom: 10px;
+	padding-left: 10px;
+}
+.dc_panel_titlebar{
+	position: absolute;
+	display: flex;
+	z-index: 51;
+	background-color: #5BF;
+	color: white;
+	margin: 10px;
+	border: solid gray 1px;
+	border-radius: 10px 10px 0px 0px;
+	width: calc(100% - 30px);
+	height: calc(10% - 40px);
+}
+.panel_title{
+	margin: 10px;
+	font-size: 32px;
+}
+select{
+	appearance: none;
+	width: 300px;/*セレクトボックスの横幅*/
+	padding: 15px;
+	color: #333;/*テキストの色*/
+	border: 1px solid #5cc0b5;/*枠線の太さ・形状・色*/
+	border-radius: 3px;/*枠線の角丸*/
+	background-color: #fff;/*背景色*/
+	cursor: pointer;/*マウスカーソルをポインターに*/
+}
+select:focus{  
+	outline: none;/*focus時の枠線を消去*/
+}
+.selectbox{
+	display: flex;
+	left: 500px;
+	position: relative;
+	width: 300px;/*親要素の横幅*/
+}
+.selectbox::before{
+	position: absolute;
+	top: 15px;/*矢印の上からの位置*/
+	right: 20px;/*矢印の右からの位置*/
+	content: '';
+	width: 10px;/*矢印の横幅*/
+	height: 10px;/*矢印の縦幅*/
+	border-top: 2px solid #5cc0b5;/*矢印の線の太さと色*/
+	border-left: 2px solid #5cc0b5;/*矢印の線の太さと色*/
+	transform: rotate(-135deg);/*矢印を回転*/
+	pointer-events: none;/*矢印部分をクリックできるようにする*/
+}
+label {
+	width: 70px;
+	text-align: left;
+	display: inline-block;
+}
+ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	background-color: #5BF;
+}
+li {
+	float: left;
+}
+li a {
+	display: block;
+	color: white;
+	text-align: center;
+	padding: 14px 16px;
+	text-decoration: none;
+}
+li a:hover:not(.active) {
+	background-color: #111;
+}
+.active {
+	background-color: #04AA6D;
+}
+.NBar{
+	padding-top: 5px;
+	text-align: center;
+	display: flex;
+	position: relative;
+}
+.Bot_Panel_BG{
+	display: flex;
+	background-color: #FFF;
+	color: #000;
+	width: 80%;
+	height: 200px;
+	margin: 10px;
+}
+img{
+	border-radius: 50%;
+}
+.bot_name{
+	color: blue;
+	margin: 10px;
+	font-size: 24px;
+	width: auto;
+}
+.bot_id{
+	color: black;
+	padding-top: 15px;
+	margin: 10px;
+	font-size: 12px;
+	width: auto;
+}
+.bot_set{
+	display: inline-block;
+	color: black;
+	max-width: 1200px;
+}
+.play-btn {
+	width: 40px;
+	height: auto;
+	margin-left: 10px;
+	margin-top: 10px;
+}
+.play-btn__svg{
+	transition: 1s; 
+	fill:#7c7c7c; 
+	opacity: .5;
+}
+.play-btn:hover .play-btn__svg {
+	fill: #a41d33;
+	opacity: 1;
+}

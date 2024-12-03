@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>{{title}}</title>
+	<link rel="stylesheet" href="/static/css/style.css">
+	<script>
+		function RunBot(BotID){
+			url = "./bot/"+BotID;
+			getText(url);
+		}
+		function getText(url, header={"Access-Control-Allow-Origin": "*", 'Access-Control-Allow-Headers': '*'}) {
+			fetch(url, {mode: 'cors', method: "GET",headers: header})
+				.then(response => response.text())
+				.then(data => Toast( data ))
+				.catch(error => console.error(error));
+		}
+		function Toast(message) {
+			document.getElementById("snackbar").innerHTML = message;
+			x = document.getElementById("snackbar");
+			x.className = "show";
+			setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+		}
+	</script>
+</head>
+<body>
+	<div>
+		<div class=dc_panel_titlebar>
+			<div class=panel_title>{{title}}</div>
+			<div class=NBar>
+				<ul>
+					<li><a href=./home">Home</a></li>
+					<li><a href="./addBot">Add Bot</a></li>
+					<li><a href="https://discord.com/developers/applications">Discord developers</a></li>
+				</ul>
+			</div>
+		</div>
+		<div class=dc_panel>
+			{% for i in range(bot_List_Legth) %}
+				<div class=Bot_Panel_BG>
+					<img src=./static/avatar/{{Bot_List[i]["ID"].replace("<@","").replace(">","")}}.png height=200>
+					<div style="display: flex; flex-direction: column;">
+						<div style=display:flex;>
+							<label class=bot_name>{{Bot_List[i]["name"]}}</label>
+							<label class=bot_id>{{Bot_List[i]["ID"]}}</label>
+							<div class="play-btn" onclick=RunBot('{{Bot_List[i]["ID"].replace("<@","").replace(">","")}}');>
+								<a href="#">
+									<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 26">
+										<polygon class="play-btn__svg" points="9.33 6.69 9.33 19.39 19.3 13.04 9.33 6.69"/>
+										<path class="play-btn__svg" d="M26,13A13,13,0,1,1,13,0,13,13,0,0,1,26,13ZM13,2.18A10.89,10.89,0,1,0,23.84,13.06,10.89,10.89,0,0,0,13,2.18Z"/>
+									</svg> 
+								</a>
+							</div>
+							<div class="play-btn" onclick=location.href="./config/{{i}}";>
+								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
+									<path d="M402.6 83.2l90.2 90.2c3.8 3.8 3.8 10 0 13.8L274.4 405.6l-92.8 10.3c-12.4 1.4-22.9-9.1-21.5-21.5l10.3-92.8L388.8 83.2c3.8-3.8 10-3.8 13.8 0zm162-22.9l-48.8-48.8c-15.2-15.2-39.9-15.2-55.2 0l-35.4 35.4c-3.8 3.8-3.8 10 0 13.8l90.2 90.2c3.8 3.8 10 3.8 13.8 0l35.4-35.4c15.2-15.3 15.2-40 0-55.2zM384 346.2V448H64V128h229.8c3.2 0 6.2-1.3 8.5-3.5l40-40c7.6-7.6 2.2-20.5-8.5-20.5H48C21.5 64 0 85.5 0 112v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V306.2c0-10.7-12.9-16-20.5-8.5l-40 40c-2.2 2.3-3.5 5.3-3.5 8.5z"/>
+								</svg>
+							</div>
+						</div>
+						<div style="margin: 10px;overflow: scroll;">
+							<div class=bot_set>{{Bot_List[i]["Setting"]}}</div>
+						</div>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+	<div id="snackbar">Some text some message..</div>
+</body>
+</html>
+<style>
+#snackbar {
+	visibility: hidden;
+	min-width: 250px;
+	margin-left: -125px;
+	background-color: #fff;
+	color: #222;
+	text-align: center;
+	border-radius: 2px;
+	padding: 16px;
+	position: fixed;
+	z-index: 100;
+	left: 50%;
+	bottom: 30px;
+	font-size: 17px;
+}
+#snackbar.show {
+	visibility: visible;
+	-webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+	animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+@-webkit-keyframes fadein {
+	from {bottom: 0; opacity: 0;} 
+	to {bottom: 30px; opacity: 1;}
+}
+@keyframes fadein {
+	from {bottom: 0; opacity: 0;}
+	to {bottom: 30px; opacity: 1;}
+}
+@-webkit-keyframes fadeout {
+	from {bottom: 30px; opacity: 1;} 
+	to {bottom: 0; opacity: 0;}
+}
+@keyframes fadeout {
+	from {bottom: 30px; opacity: 1;}
+	to {bottom: 0; opacity: 0;}
+}
+</style>
