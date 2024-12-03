@@ -1,11 +1,14 @@
-from flask import Flask, request, url_for
-from flask import render_template, redirect
+
+
+from flask_cors import CORS
 from os import system, name
+from flask import *
 from dc.bot import *
 from datetime import *
 import json, asyncio, threading
 
 app = Flask(__name__)
+CORS(app)
 
 def clear():
 	# for windows
