@@ -12,6 +12,7 @@
    - `pip install ollama`
    - `pip install asyncio`
    - `pip install threaded`
+   - `pip install Flask-Cors`
    - `python3 -m pip install -U py-cord`
 
 3. 啟動Bot-Server(Startup Bot-Server)
