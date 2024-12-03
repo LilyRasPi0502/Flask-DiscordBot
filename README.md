@@ -1,6 +1,6 @@
 # Flask-DiscordBot
-- 基於python-flask庫的discord機器人
-- Based python-flask discord bot
+- 基於python-flask庫 ollama的discord AI機器人
+- Based python-flask and ollama discord AI bot
 
 # 如何使用(How to used)
 1. 環境建置(environment Build)
