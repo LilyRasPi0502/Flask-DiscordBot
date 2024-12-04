@@ -34,6 +34,7 @@
    - 為了節省資源，機器人會在 UCT+8 [00:00, 08:00, 16:00] 自動關閉(To save resources, Bot auto close on UCT+8 [00:00, 08:00, 16:00])
 
 # 更新日誌(Update logging)
-- [20241202] create this project
-- [20241203] create this repository
+- [20241202] Create this project
+- [20241203] Create this repository
+- [20241204] Fixed repeated startup and UI issues
 
