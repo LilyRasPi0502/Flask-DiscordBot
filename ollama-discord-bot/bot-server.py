@@ -10,6 +10,9 @@ import json, asyncio, threading
 app = Flask(__name__)
 CORS(app)
 
+BotStatus = []
+BotThread = []
+
 def clear():
 	# for windows
 	if name == 'nt':
@@ -50,23 +53,54 @@ def run_bot(ID):
 	jsonFile = readJson("index")
 	for i in range(len(jsonFile["Bot_List"])):
 		if RemoveSimple(jsonFile["Bot_List"][i]["ID"]) == ID:
+			BotStatus.append({"Bot_ID":ID, "Status": True})
 			new_loop = asyncio.new_event_loop()
 			asyncio.set_event_loop(new_loop)
 			loop = asyncio.get_event_loop()
 			task = asyncio.ensure_future(bot1(jsonFile["Bot_List"][i]["Token"]))
-			loop.run_until_complete(asyncio.wait([task]))
-			s = task.result()
+
+			#loop.run_until_complete(asyncio.wait([task]))
+			#print(task.result())
 
 @app.route('/bot/<ID>')
 def bot(ID):
+	if len(BotStatus) > 0:
+		for i in range(len(BotStatus)):
+			if BotStatus[i]["Bot_ID"] == ID and BotStatus[i]["Status"] :
+				return f"{ID} is repeat run!!!"
 	#bot1(jsonFile["Bot_List"][i]["Token"])
 	try:
 		thread1 = threading.Thread(target=run_bot, args=(ID, ))
 		thread1.start()
+		thread1.args = (ID, )
+		BotThread.append(thread1)
 		return f"{ID} bot is run."
 	except:
 		return "cannot run bot."
 
+@app.route('/aliveReport', methods=['GET', 'POST'])
+def aliveReport():
+	if len(BotStatus) > 0:
+		#return request.json
+		for i in range(len(BotStatus)):
+			if BotStatus[i]["Bot_ID"] == request.json["ID"]:
+				if request.json["Action"] == "Report":
+					BotStatus[i]["Status"] = request.json["Status"]
+				else:
+					if BotStatus[i]["Status"] :
+						Str = "online"
+					else:
+						Str = "offline"
+					return '{"Status":"'+Str+'"}'
+				for o in range(len(BotThread)):
+					if BotThread[o].args[0] == BotStatus[i]["Bot_ID"]:
+						#print(f"Thread is {BotThread[o].is_alive()}")
+						if not BotStatus[i]["Status"] :
+							del BotThread[o]
+		
+	else:
+		return '{"Status":"offline"}'
+	return '{"Status":200}'
 	
 @app.route('/save', methods=['GET', 'POST'])
 def save():
@@ -125,7 +159,7 @@ def login():
 
 if __name__ == '__main__':
 	clear()
-	app.run(debug = True, host="0.0.0.0", port=8964)
+	app.run(debug = True, host="0.0.0.0", port=8966)
 	
 
 	
