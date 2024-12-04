@@ -32,7 +32,7 @@ html, body{
 	border: solid gray 1px;
 	border-radius: 10px 10px 0px 0px;
 	width: calc(100% - 30px);
-	height: calc(10% - 40px);
+	height: 60px;
 }
 .panel_title{
 	margin: 10px;
