@@ -3,6 +3,8 @@ import discord, requests, os, json
 from discord.ext import commands
 from discord.ext import tasks
 from datetime import *
+from ollama import chat
+from ollama import ChatResponse
 
 
 def download_image(image_url, file_dir):
@@ -18,8 +20,6 @@ def download_image(image_url, file_dir):
 		print(f"Failed to download the image. Status code: {response.status_code}")
 
 def ollama(model="gemma2", message=[{"role":"user","content":"Hi!"}]):
-	from ollama import chat
-	from ollama import ChatResponse
 	response: ChatResponse = chat(model=model, messages=message)
 	return response['message']['content']
 
@@ -49,7 +49,7 @@ class MyBot(commands.Bot):
 		if str(message.author).find(str(self.user)) != -1:
 			return
 		Send = True
-		print(f"[{self.Get_Time()}] Get Message from {str(message.guild)}.{str(message.channel)}.{str(message.author.display_name)}: {str(message.content)}")
+		# print(f"[{self.Get_Time()}] Get Message from {str(message.guild)}.{str(message.channel)}.{str(message.author.display_name)}: {str(message.content)}")
 		
 		#聊天程序
 		if message.reference is not None:
