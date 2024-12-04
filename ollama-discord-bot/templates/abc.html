@@ -10,11 +10,15 @@
 		<div class=dc_panel_titlebar>
 			<div class=panel_title>{{title}}</div>
 			<div class=selectbox>
-				<select onchange="location.href='/config/'+this.selectedIndex">
-					{% for o in arg["Bot_List"] %}
-						<option value="{{ o.name }}" {% if slt['name'] == o.name: %} selected {% endif %} >{{ o.name }}</option>
-					{% endfor %}
-				</select>
+				{% block content %}
+					{% if slt['name'] != "Add_Bot": %}
+						<select onchange="location.href='/config/'+this.selectedIndex">
+							{% for o in arg["Bot_List"] %}
+								<option value="{{ o.name }}" {% if slt['name'] == o.name: %} selected {% endif %} >{{ o.name }}</option>
+							{% endfor %}
+						</select>
+					{% endif %}
+				{% endblock %}
 			</div>
 		</div>
 		<div class=dc_panel>
