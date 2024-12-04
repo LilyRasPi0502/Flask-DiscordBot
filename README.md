@@ -11,6 +11,7 @@
    - `pip install Flask`
    - `pip install ollama`
    - `pip install asyncio`
+   - `pip install requests`
    - `pip install threaded`
    - `pip install Flask-Cors`
    - `python3 -m pip install -U py-cord`
