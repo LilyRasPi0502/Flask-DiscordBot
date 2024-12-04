@@ -4,6 +4,7 @@ from discord.ext import commands
 from discord.ext import tasks
 from datetime import *
 
+
 def download_image(image_url, file_dir):
 	response = requests.get(image_url)
 	if response.status_code == 200:
@@ -112,6 +113,7 @@ class MyBot(commands.Bot):
 
 	async def CloseSelf(self):
 		try:
+			requests.get('http://localhost:8966/aliveReport',json={"ID":str(self.user.id),"Action":"Report","Status":False}).text
 			await self.close()
 		except:
 			pass
@@ -130,6 +132,7 @@ def bot1(Token):
 	intents.members = True
 	bot = MyBot(command_prefix="/", intent=intents)
 	bot.run(Token)
+
 	
 if __name__ == '__main__':
 	bot1("FuckOff")
