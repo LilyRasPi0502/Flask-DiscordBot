@@ -159,7 +159,7 @@ def login():
 
 if __name__ == '__main__':
 	clear()
-	app.run(debug = True, host="0.0.0.0", port=8966)
+	app.run(debug = True, host="0.0.0.0", port=8964)
 	
 
 	
