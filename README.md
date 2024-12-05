@@ -4,7 +4,7 @@
 
 # 如何使用(How to used)
 1. 環境建置(environment Build)
-   - 安裝[python](https://www.python.org)(install python to your device)
+   - 安裝[python](https://www.python.org)(install python)
    - 安裝[ollama](https://github.com/ollama/ollama)(install ollama)
 
 2. 安裝依賴庫(Install dependent libraries)
@@ -37,4 +37,5 @@
 - [20241202] Create this project
 - [20241203] Create this repository
 - [20241204] Fixed repeated startup and UI issues
+- [20241205] Added online status indicator to Home page
 
