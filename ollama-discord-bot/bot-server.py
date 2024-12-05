@@ -1,4 +1,4 @@
-
+# 你電腦放客廳家人問你在看什麼欸所以你現在家人聽得到我說話是不是呃這個我的臺我現在在播放的節目是我教大家怎麼吃ㄐㄐ欸咿耶左邊一個ㄐㄐ右邊一個ㄐㄐ噯ㄐㄐ好吃每天吃身體健康
 
 from flask_cors import CORS
 from os import system, name
@@ -67,16 +67,16 @@ def bot(ID):
 	if len(BotStatus) > 0:
 		for i in range(len(BotStatus)):
 			if BotStatus[i]["Bot_ID"] == ID and BotStatus[i]["Status"] :
-				return f"{ID} is repeat run!!!"
+				return '{"Status":200,"content":"'+str(ID)+' is repeat run!!!"}'
 	#bot1(jsonFile["Bot_List"][i]["Token"])
 	try:
 		thread1 = threading.Thread(target=run_bot, args=(ID, ))
 		thread1.start()
 		thread1.args = (ID, )
 		BotThread.append(thread1)
-		return f"{ID} bot is run."
+		return '{"Status":200,"content":"'+str(ID)+' bot is run."}'
 	except:
-		return "cannot run bot."
+		return '{"Status":200,"content":"cannot run bot."}'
 
 @app.route('/aliveReport', methods=['GET', 'POST'])
 def aliveReport():
@@ -86,21 +86,23 @@ def aliveReport():
 			if BotStatus[i]["Bot_ID"] == request.json["ID"]:
 				if request.json["Action"] == "Report":
 					BotStatus[i]["Status"] = request.json["Status"]
+					return '{"Status":"200"}'
 				else:
 					if BotStatus[i]["Status"] :
-						Str = "online"
+						return '{"Status":"online", "Count": '+request.json["Status"]+'}'
 					else:
-						Str = "offline"
-					return '{"Status":"'+Str+'"}'
+						return '{"Status":"offline", "Count": '+request.json["Status"]+'}'
 				for o in range(len(BotThread)):
 					if BotThread[o].args[0] == BotStatus[i]["Bot_ID"]:
 						#print(f"Thread is {BotThread[o].is_alive()}")
 						if not BotStatus[i]["Status"] :
 							del BotThread[o]
+			#else:
+				#return '{"Status":"offline"}'
 		
-	else:
-		return '{"Status":"offline"}'
-	return '{"Status":200}'
+	
+	return '{"Status":"offline", "Count": '+str(request.json["Status"])+'}'
+	#return '{"Status":"offline", "Count": "0"}'
 	
 @app.route('/save', methods=['GET', 'POST'])
 def save():
@@ -148,6 +150,7 @@ def home():
 		Arg["Bot_List"][i].update({"Setting": SettingFile["Setting"]})
 	return render_template('home.html', title="Bot Home", Bot_List=Arg["Bot_List"], bot_List_Legth=len(Arg["Bot_List"]))
 	
+"""
 @app.route('/login', methods=['GET', 'POST']) 
 def login():
 	if request.method == 'POST': 
@@ -156,6 +159,7 @@ def login():
 	return "<form method='post' action='/login'><input type='text' name='username' />" \
 	"</br>" \
 	"<button type='submit'>Submit</button></form>"
+"""
 
 if __name__ == '__main__':
 	clear()
