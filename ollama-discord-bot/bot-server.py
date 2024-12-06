@@ -10,6 +10,8 @@ import json, asyncio, threading
 app = Flask(__name__)
 CORS(app)
 
+Serverport = 8964
+
 BotStatus = []
 BotThread = []
 
@@ -49,15 +51,22 @@ def download_image(image_url, file_dir):
 	else:
 		print(f"Failed to download the image. Status code: {response.status_code}")
 	
-def run_bot(ID):
+def run_bot(ID, Serverport):
 	jsonFile = readJson("index")
+	NeverRun = True 
 	for i in range(len(jsonFile["Bot_List"])):
 		if RemoveSimple(jsonFile["Bot_List"][i]["ID"]) == ID:
-			BotStatus.append({"Bot_ID":ID, "Status": True})
+			if len(BotStatus) > 0:
+				for o in range(len(BotStatus)):
+					if str(ID) == BotStatus[o]["Bot_ID"]:
+						NeverRun = False
+			if NeverRun:		
+				BotStatus.append({"Bot_ID":ID, "Status": True})
+				
 			new_loop = asyncio.new_event_loop()
 			asyncio.set_event_loop(new_loop)
 			loop = asyncio.get_event_loop()
-			task = asyncio.ensure_future(bot1(jsonFile["Bot_List"][i]["Token"]))
+			task = asyncio.ensure_future(bot1(Token=jsonFile["Bot_List"][i]["Token"], port=Serverport))
 
 			#loop.run_until_complete(asyncio.wait([task]))
 			#print(task.result())
@@ -70,7 +79,7 @@ def bot(ID):
 				return '{"Status":200,"content":"'+str(ID)+' is repeat run!!!"}'
 	#bot1(jsonFile["Bot_List"][i]["Token"])
 	try:
-		thread1 = threading.Thread(target=run_bot, args=(ID, ))
+		thread1 = threading.Thread(target=run_bot, args=(ID, Serverport, ))
 		thread1.start()
 		thread1.args = (ID, )
 		BotThread.append(thread1)
@@ -80,7 +89,9 @@ def bot(ID):
 
 @app.route('/aliveReport', methods=['GET', 'POST'])
 def aliveReport():
+	#print(BotStatus)
 	if len(BotStatus) > 0:
+	
 		#return request.json
 		for i in range(len(BotStatus)):
 			if BotStatus[i]["Bot_ID"] == request.json["ID"]:
@@ -163,7 +174,7 @@ def login():
 
 if __name__ == '__main__':
 	clear()
-	app.run(debug = True, host="0.0.0.0", port=8964)
+	app.run(debug = True, host="0.0.0.0", port=Serverport)
 	
 
 	
