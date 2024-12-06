@@ -90,15 +90,14 @@ def bot(ID):
 @app.route('/aliveReport', methods=['GET', 'POST'])
 def aliveReport():
 	#print(BotStatus)
-	if len(BotStatus) > 0:
-	
-		#return request.json
+	if len(BotStatus) > 0 and request.json["Action"] == "Report":
 		for i in range(len(BotStatus)):
 			if BotStatus[i]["Bot_ID"] == request.json["ID"]:
-				if request.json["Action"] == "Report":
-					BotStatus[i]["Status"] = request.json["Status"]
-					return '{"Status":"200"}'
-				else:
+				BotStatus[i]["Status"] = request.json["Status"]
+				return '{"Status":200}'
+	else:
+		return {"Status":200, "BotStatus":BotStatus}
+	"""
 					if BotStatus[i]["Status"] :
 						return '{"Status":"online", "Count": '+request.json["Status"]+'}'
 					else:
@@ -114,6 +113,7 @@ def aliveReport():
 	
 	return '{"Status":"offline", "Count": '+str(request.json["Status"])+'}'
 	#return '{"Status":"offline", "Count": "0"}'
+	"""
 	
 @app.route('/save', methods=['GET', 'POST'])
 def save():
