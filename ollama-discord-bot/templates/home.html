@@ -35,11 +35,12 @@
 					.then(response => response.json())
 					.then(data => ChangeOnlineStatusColor(data) ) //
 					.catch(error => console.error(error));
-					// console.log(data["Count"]+"="+data["Status"])
+					
 
 			}
 		}
 		function ChangeOnlineStatusColor(data={"Status":"offline"}){
+			//console.log(data["Count"]+"="+data["Status"]);
 			if(data["Status"] == "online")Str = "#0f0";
 			else Str = "#f00";
 			document.getElementById("OnlineStatus"+data["Count"]).style.background = Str;
