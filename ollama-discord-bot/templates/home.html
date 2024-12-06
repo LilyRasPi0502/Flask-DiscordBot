@@ -24,26 +24,29 @@
 		function UpdateOnlineStatus(){
 			url = "./aliveReport";
 			header={"Access-Control-Allow-Origin": "*", 'Access-Control-Allow-Headers': '*',"Content-Type": "application/json","Accept": "application/json"};
-			for(i=0;i<{{bot_List_Legth}};i++){
-				Id = document.getElementById("Bot_ID"+i);
-				BotID = Id.innerHTML.replace("&lt;@","").replace("&gt;","");
-				
-				BB = {"ID": BotID, "Action": "GetStatus", "Status": i.toString()};
-				b = JSON.stringify(BB);
-				//console.log(b);
-				fetch(url, {mode: 'cors', method: "POST", headers: header,body: b})
+			BB = {"Action": "GetStatus"};
+			b = JSON.stringify(BB);
+			fetch(url, {mode: 'cors', method: "POST", headers: header,body: b})
 					.then(response => response.json())
-					.then(data => ChangeOnlineStatusColor(data) ) //
-					.catch(error => console.error(error));
-					
-
-			}
+					.then(data => ChangeOnlineStatusColor(data["BotStatus"]) ); //
+					//.catch(error => console.error(error));
 		}
-		function ChangeOnlineStatusColor(data={"Status":"offline"}){
-			//console.log(data["Count"]+"="+data["Status"]);
-			if(data["Status"] == "online")Str = "#0f0";
-			else Str = "#f00";
-			document.getElementById("OnlineStatus"+data["Count"]).style.background = Str;
+		function ChangeOnlineStatusColor(data){
+			//console.log(data);
+			for(o=0; o<data.length; o++){
+				D = data[o];
+				for(i=0;i<{{bot_List_Legth}};i++){
+					Id = document.getElementById("Bot_ID"+i);
+					BotID = Id.innerHTML.replace("&lt;@","").replace("&gt;","");
+					
+					if(D["Bot_ID"] == BotID){
+						
+						if(D["Status"] == true)Str = "#0f0";
+						else Str = "#f00";
+						document.getElementById("OnlineStatus"+i).style.background = Str;
+					}
+				}
+			}
 		}
 		setInterval(UpdateOnlineStatus, 10000);
 	</script>
