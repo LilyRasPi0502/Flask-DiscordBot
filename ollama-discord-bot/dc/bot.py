@@ -6,6 +6,7 @@ from datetime import *
 from ollama import chat
 from ollama import ChatResponse
 
+Serverport = 1145141919810
 
 def download_image(image_url, file_dir):
 	response = requests.get(image_url)
@@ -41,6 +42,7 @@ class MyBot(commands.Bot):
 		self.message2 = f"正在使用身分: {self.user}({self.user.id})"
 		print(self.message1)
 		download_image(f"{self.user.avatar}", f"./static/avatar/{self.user.id}.png") 
+		requests.get(f'http://localhost:{Serverport}/aliveReport',json={"ID":str(self.user.id),"Action":"Report","Status":True}).text
 		#os.system(f"curl {self.user.avatar} -o ./static/avatar/{self.user.id}.png")
 		await self.change_presence(activity=discord.Activity(name="", type=0))
 		
@@ -113,7 +115,7 @@ class MyBot(commands.Bot):
 
 	async def CloseSelf(self):
 		try:
-			requests.get('http://localhost:8966/aliveReport',json={"ID":str(self.user.id),"Action":"Report","Status":False}).text
+			requests.get(f'http://localhost:{Serverport}/aliveReport',json={"ID":str(self.user.id),"Action":"Report","Status":False}).text
 			await self.close()
 		except:
 			pass
@@ -126,7 +128,9 @@ class MyBot(commands.Bot):
 		dt2 = dt1.astimezone(timezone(timedelta(hours=8))) # 轉換時區 -> 東八區
 		return dt2.strftime("%Y-%m-%d %H:%M:%S")
 			
-def bot1(Token):
+def bot1(Token="FuckOff", port=114514):
+	global Serverport
+	Serverport = port
 	intents		= discord.Intents.default()
 	intents.message_content = True
 	intents.members = True
@@ -135,5 +139,5 @@ def bot1(Token):
 
 	
 if __name__ == '__main__':
-	bot1("FuckOff")
+	bot1(Token="FuckOff",port=114514)
 	
