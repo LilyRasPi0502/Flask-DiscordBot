@@ -38,4 +38,5 @@
 - [20241203] Create this repository
 - [20241204] Fixed repeated startup and UI issues
 - [20241205] Added online status indicator to Home page
+- [20241206] Fixed the port issue where Bot could not report online status normally
 
