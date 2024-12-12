@@ -5,15 +5,20 @@ from os import system, name
 from flask import *
 from dc.bot import *
 from datetime import *
-import json, asyncio, threading
+# from flask_socketio import SocketIO, emit
+import json, asyncio, threading, time, requests
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'secret!'
 CORS(app)
+# socketio = SocketIO(app)
 
 Serverport = 8964
 
 BotStatus = []
 BotThread = []
+AutoStart = []
+AutoProcess = True
 
 def clear():
 	# for windows
@@ -70,6 +75,24 @@ def run_bot(ID, Serverport):
 
 			#loop.run_until_complete(asyncio.wait([task]))
 			#print(task.result())
+			
+
+def AutoRunBot():
+	global AutoStart
+	global AutoProcess
+	if not AutoProcess:
+		return
+	else:
+		AutoProcess = False
+	AutoStart = readJson("AutoStart")["Bot_List"]
+	if len(BotStatus) > 0:
+		for bot in BotStatus:
+			for Autosetting in AutoStart:
+				if (Autosetting["AutoStart"] == 1) and (Autosetting["ID"] == bot["Bot_ID"]):
+					if not bot["Status"]:
+						requests.get(f"http://127.0.0.1:{Serverport}/bot/{bot['Bot_ID']}")
+						time.sleep(5)
+	AutoProcess = True
 
 @app.route('/bot/<ID>')
 def bot(ID):
@@ -77,7 +100,7 @@ def bot(ID):
 		for i in range(len(BotStatus)):
 			if BotStatus[i]["Bot_ID"] == ID and BotStatus[i]["Status"] :
 				return '{"Status":200,"content":"'+str(ID)+' is repeat run!!!"}'
-	#bot1(jsonFile["Bot_List"][i]["Token"])
+	
 	try:
 		thread1 = threading.Thread(target=run_bot, args=(ID, Serverport, ))
 		thread1.start()
@@ -89,7 +112,7 @@ def bot(ID):
 
 @app.route('/aliveReport', methods=['GET', 'POST'])
 def aliveReport():
-	#print(BotStatus)
+	AutoRunBot()
 	if len(BotStatus) > 0 and request.json["Action"] == "Report":
 		for i in range(len(BotStatus)):
 			if BotStatus[i]["Bot_ID"] == request.json["ID"]:
@@ -97,24 +120,26 @@ def aliveReport():
 				return '{"Status":200}'
 	else:
 		return {"Status":200, "BotStatus":BotStatus}
-	"""
-					if BotStatus[i]["Status"] :
-						return '{"Status":"online", "Count": '+request.json["Status"]+'}'
-					else:
-						return '{"Status":"offline", "Count": '+request.json["Status"]+'}'
-				for o in range(len(BotThread)):
-					if BotThread[o].args[0] == BotStatus[i]["Bot_ID"]:
-						#print(f"Thread is {BotThread[o].is_alive()}")
-						if not BotStatus[i]["Status"] :
-							del BotThread[o]
-			#else:
-				#return '{"Status":"offline"}'
-		
+
+@app.route('/AutoBotSwitch', methods=['GET', 'POST'])
+def AutoBotSwitch():
+	AutoBot = readJson("AutoStart")
+	for o in range(len(AutoBot["Bot_List"])):
+		if AutoBot["Bot_List"][o]["ID"] == RemoveSimple(request.json["ID"]):
+			if AutoBot["Bot_List"][o]["AutoStart"] == 0:
+				AutoBot["Bot_List"][o]["AutoStart"] = 1
+			else:
+				AutoBot["Bot_List"][o]["AutoStart"] = 0
+				
+		for i in range(len(AutoStart)):
+			if AutoStart[i]["ID"] == RemoveSimple(request.json["ID"]):
+				AutoStart[i]["AutoStart"] = AutoBot["Bot_List"][o]["AutoStart"]
+				
+	writeJson(data=AutoBot, Path="AutoStart")
 	
-	return '{"Status":"offline", "Count": '+str(request.json["Status"])+'}'
-	#return '{"Status":"offline", "Count": "0"}'
-	"""
+	return {"Status":"200"}
 	
+
 @app.route('/save', methods=['GET', 'POST'])
 def save():
 	if request.values["Action"] == "Add_Bot":
@@ -127,6 +152,9 @@ def save():
 		jsonFile["Bot_List"].append({"name":botname,"ID":request.values["botid"],"Token":request.values["bottoken"]})
 		writeJson(data=jsonFile, Path="index")
 		writeJson(data={"Setting":request.values["setting"]}, Path=RemoveSimple(request.values["botid"]))
+		jsonFile = readJson("AutoStart")
+		jsonFile["Bot_List"].append({"ID":RemoveSimple(request.values["botid"]),"AutoStart":0})
+		writeJson(data=jsonFile, Path="AutoStart")
 	else:
 		jsonFile = readJson("index")
 		for i in range(len(jsonFile["Bot_List"])):
@@ -138,6 +166,7 @@ def save():
 				SettingFile["Setting"] = request.values["setting"].replace("\n", "")
 				writeJson(data=jsonFile, Path="index")
 				writeJson(data=SettingFile, Path=RemoveSimple(request.values["botid"]))
+		
 	return redirect(url_for('home'))
 
 @app.route('/config/<Select>')
@@ -159,6 +188,10 @@ def home():
 	for i in range(len(Arg["Bot_List"])):
 		SettingFile = readJson(RemoveSimple(Arg["Bot_List"][i]["ID"]))
 		Arg["Bot_List"][i].update({"Setting": SettingFile["Setting"]})
+		AutoBot = readJson("AutoStart")
+		for o in range(len(AutoBot["Bot_List"])):
+			if AutoBot["Bot_List"][o]["ID"] == RemoveSimple(Arg["Bot_List"][i]["ID"]): 
+				Arg["Bot_List"][i].update({"AutoBot": AutoBot["Bot_List"][o]["AutoStart"]})
 	return render_template('home.html', title="Bot Home", Bot_List=Arg["Bot_List"], bot_List_Legth=len(Arg["Bot_List"]))
 	
 """
