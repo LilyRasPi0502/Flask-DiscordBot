@@ -4,6 +4,7 @@
 	<meta charset="UTF-8">
 	<title>{{title}}</title>
 	<link rel="stylesheet" href="/static/css/style.css">
+	<link rel="stylesheet" href="/static/css/sw.css">
 	<script>
 		function RunBot(BotID){
 			url = "./bot/"+BotID;
@@ -32,7 +33,6 @@
 					//.catch(error => console.error(error));
 		}
 		function ChangeOnlineStatusColor(data){
-			//console.log(data);
 			for(o=0; o<data.length; o++){
 				D = data[o];
 				for(i=0;i<{{bot_List_Legth}};i++){
@@ -47,6 +47,18 @@
 					}
 				}
 			}
+		}
+		function setAutoStartBot(BotSerial, Status){
+			url = "./AutoBotSwitch";
+			header={"Access-Control-Allow-Origin": "*", 'Access-Control-Allow-Headers': '*',"Content-Type": "application/json","Accept": "application/json"};
+			Id = document.getElementById("Bot_ID"+BotSerial);
+			BotID = Id.innerHTML.replace("&lt;@","").replace("&gt;","");
+			BB = {"ID": BotID};
+			b = JSON.stringify(BB);
+			fetch(url, {mode: 'cors', method: "POST", headers: header,body: b})
+					.then(response => response.json())
+					//.then(data => console.log(data) ); //
+					//.catch(error => console.error(error));
 		}
 		setInterval(UpdateOnlineStatus, 10000);
 	</script>
@@ -89,6 +101,12 @@
 								</svg>
 							</div>
 							<div id="OnlineStatus{{i}}" style="background:#f00;width:32px;height:32px;margin:13px;border-radius:50%;" onclick="UpdateOnlineStatus()"></div>
+							<div style='margin-top:10px;'>
+								<label class="switch">
+									<input type="checkbox" onchange="setAutoStartBot({{i}}, this.value);" {% if Bot_List[i]['AutoBot'] == 1: %} checked {% endif %} >
+									<span class="slider round"></span>
+								</label>
+							</div>
 						</div>
 						<div style="margin: 10px;overflow: scroll;">
 							<div class=bot_set>{{Bot_List[i]["Setting"]}}</div>
