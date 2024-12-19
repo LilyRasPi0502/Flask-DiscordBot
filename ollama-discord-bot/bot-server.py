@@ -13,12 +13,13 @@ app.config['SECRET_KEY'] = 'secret!'
 CORS(app)
 # socketio = SocketIO(app)
 
-Serverport = 8964
+Serverport = 8965
 
+
+AotuBotTH = []
 BotStatus = []
 BotThread = []
 AutoStart = []
-AutoProcess = True
 
 def clear():
 	# for windows
@@ -79,40 +80,47 @@ def run_bot(ID, Serverport):
 
 def AutoRunBot():
 	global AutoStart
-	global AutoProcess
-	if not AutoProcess:
-		return
-	else:
-		AutoProcess = False
-	AutoStart = readJson("AutoStart")["Bot_List"]
-	if len(BotStatus) > 0:
-		for bot in BotStatus:
-			for Autosetting in AutoStart:
-				if (Autosetting["AutoStart"] == 1) and (Autosetting["ID"] == bot["Bot_ID"]):
-					if not bot["Status"]:
-						requests.get(f"http://127.0.0.1:{Serverport}/bot/{bot['Bot_ID']}")
-						time.sleep(5)
-	AutoProcess = True
+	while True:
+		AutoStart = readJson("AutoStart")["Bot_List"]
+		if len(BotStatus) > 0:
+			for bot in BotStatus:
+				for Autosetting in AutoStart:
+					if (Autosetting["AutoStart"] == 1) and (Autosetting["ID"] == bot["Bot_ID"]):
+						if not bot["Status"]:
+							requests.get(f"http://127.0.0.1:{Serverport}/bot/{bot['Bot_ID']}")
+		time.sleep(60)
+	
 
 @app.route('/bot/<ID>')
 def bot(ID):
+	if len(AotuBotTH) <= 0:
+		AutoBotTh = threading.Thread(target=AutoRunBot)
+		AutoBotTh.start()
+		AotuBotTH.append(AutoBotTh)
+		print("AutoBotTh ON")
 	if len(BotStatus) > 0:
 		for i in range(len(BotStatus)):
 			if BotStatus[i]["Bot_ID"] == ID and BotStatus[i]["Status"] :
 				return '{"Status":200,"content":"'+str(ID)+' is repeat run!!!"}'
 	
 	try:
-		thread1 = threading.Thread(target=run_bot, args=(ID, Serverport, ))
-		thread1.start()
-		thread1.args = (ID, )
-		BotThread.append(thread1)
-		return '{"Status":200,"content":"'+str(ID)+' bot is run."}'
+		isRun = False
+		for BotTh in BotThread:
+			if BotTh.args[0] == ID:
+				isRun = True
+		if not isRun:
+			thread1 = threading.Thread(target=run_bot, args=(ID, Serverport, ))
+			thread1.start()
+			thread1.args = (ID, )
+			BotThread.append(thread1)
+			return '{"Status":200,"content":"'+str(ID)+' bot is run."}'
+		else:
+			return '{"Status":200,"content":"'+str(ID)+' is repeat run!!!"}'
 	except:
 		return '{"Status":200,"content":"cannot run bot."}'
 
 @app.route('/aliveReport', methods=['GET', 'POST'])
 def aliveReport():
-	AutoRunBot()
 	if len(BotStatus) > 0 and request.json["Action"] == "Report":
 		for i in range(len(BotStatus)):
 			if BotStatus[i]["Bot_ID"] == request.json["ID"]:
@@ -204,6 +212,8 @@ def login():
 	"</br>" \
 	"<button type='submit'>Submit</button></form>"
 """
+
+
 
 if __name__ == '__main__':
 	clear()
