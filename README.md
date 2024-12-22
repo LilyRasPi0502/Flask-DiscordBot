@@ -40,4 +40,5 @@
 - [20241205] Added online status indicator to Home page
 - [20241206] Fixed the port issue where Bot could not report online status normally
 - [20241212] Added subsequent self-holding switch
+- [20241222] Modify self-holding function stability
 
